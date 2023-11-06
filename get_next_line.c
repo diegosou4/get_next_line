@@ -20,6 +20,8 @@ char    *get_next_line(int fd)
     char *strr;
     if(fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
         return (NULL);
+    if(i <= BUFFER_SIZE)
+    {
    if((j = read(fd, str, BUFFER_SIZE)) > 0)
     {
         str[j] = '\0';
@@ -32,7 +34,8 @@ char    *get_next_line(int fd)
         i += ft_strlen((const char *)strr);
         return (strr);
     }
-    return ("\n TESTE");
+    }
+    return (NULL);
 }
 
 
@@ -41,7 +44,8 @@ int main()
     
         int fd = open("string.txt", O_RDONLY);
         printf("%s", get_next_line(fd));
-  
+        printf("%s", get_next_line(fd));
+        printf("%s", get_next_line(fd));
 
         close(fd);
       
