@@ -42,7 +42,6 @@ char	*ft_strdup(char *src)
 		dest[i] = src[i];
 		i++;
 	}
-	free(src);
 	return (dest);
 }
 
@@ -54,12 +53,14 @@ char *ft_finder(char *str, char c)
 	int j;
 	j = 0;
 
-	while(str[i] != c || str[i] != '\0')
+	while(str[i] != c)
 	{
+		if(str[i] == '\0')
+			break;
 		i++;
 	}
 	i++;
-	strr = (char *)calloc(sizeof(char) , (i + 1));
+	strr = (char *)calloc(sizeof(char) , i );
 	if(!strr)
 		return (NULL);
 	while(j != i)

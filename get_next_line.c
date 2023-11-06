@@ -14,28 +14,29 @@
 
 char    *get_next_line(int fd)
 {
-    static char str[BUFFER_SIZE + 1];
+    char strori[BUFFER_SIZE + 1];
+    static char *str;
     static int i;
     int j;
     char *strr;
     if(fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
         return (NULL);
+    if((j = read(fd, strori, BUFFER_SIZE)) != 0)
+    {
+        strori[j] = '\0';
+        str = ft_strdup(strori);
+    } 
     if(i <= BUFFER_SIZE)
     {
-   if((j = read(fd, str, BUFFER_SIZE)) > 0)
-    {
-        str[j] = '\0';
-        strr = ft_finder(str, '\n');
-        i += ft_strlen((const char *)strr);
-        return (strr);
-    }else
-    {
         strr = ft_finder(str + i, '\n');
-        i += ft_strlen((const char *)strr);
+           printf("%s debug", (str + i));
+        i += ft_strlen((const char *)strr); 
+       // printf(" \n %d digito da ascii \n", str[i]);
+     //   printf(" \n %i posicao \n", i);
+        printf(" \n %li retorno strlen \n", ft_strlen((const char *)strr));
         return (strr);
     }
-    }
-    return (NULL);
+    return (str);
 }
 
 
@@ -45,8 +46,6 @@ int main()
         int fd = open("string.txt", O_RDONLY);
         printf("%s", get_next_line(fd));
         printf("%s", get_next_line(fd));
-        printf("%s", get_next_line(fd));
-
         close(fd);
       
 
