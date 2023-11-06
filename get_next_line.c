@@ -6,7 +6,7 @@
 /*   By: diemorei <diemorei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 16:52:58 by diegmore          #+#    #+#             */
-/*   Updated: 2023/11/06 10:43:28 by diemorei         ###   ########.fr       */
+/*   Updated: 2023/11/06 11:08:36 by diemorei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ char    *get_next_line(int fd)
 {
     char *str;
     char tmp[1];
-    char buf[BUFFER_SIZE + 1];
     static int i;
     int j;
     if(fd < 0 || BUFFER_SIZE <= 0)
@@ -60,6 +59,12 @@ char    *get_next_line(int fd)
         {
             str[i] = tmp[0];
         }
+        if(tmp[0] == '\n')
+        {
+            str[i] = '\n';
+            i++;
+            break;
+        }   
         i++;
     }
     str[i] = '\0';
