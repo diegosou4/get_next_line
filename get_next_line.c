@@ -15,19 +15,29 @@
 char    *get_next_line(int fd)
 {
     char *str;
-    int i;
-    i = 0;
+    char *tmp;
+    char buf[BUFFER_SIZE + 1];
+    static int i;
+    int j;
+    if(fd < 0 || BUFFER_SIZE <= 0)
+        return (NULL);
     str = malloc(sizeof(char) * BUFFER_SIZE);
-    while(str[i] != '\n')
+    j = read(fd, str, BUFFER_SIZE);
+    while(str[0], str[i] != '\n')
     {
-        read(fd, str + i, 1);
-        if(str[i] == '\n')
+        if(str[i] == '\0')
             break;
+        buf[i] = str[i];
         i++;
     }
-    str[i + 1] = '\0';
-    ft_strdup(str);
-    return (str);
+    if(str[i] == '\n')
+    {
+        buf[i] = str[i];
+        i++;
+    }
+    buf[i] = '\0';
+    tmp = ft_strdup(buf);
+    return (tmp);
 
 }
 
@@ -38,13 +48,8 @@ int main(int argc, char *argv[])
     {
         int fd = open(argv[1], O_RDONLY);
         char *str = get_next_line(fd);
-        printf("%s", str);     
-        str = get_next_line(fd);
         printf("%s", str);
-        str = get_next_line(fd);
-        printf("%s", str);
-        str = get_next_line(fd);
-        printf("%s", str);
+        printf("%s", get_next_line(fd));
     }
 
 }
