@@ -53,9 +53,9 @@ char *ft_finder(char *str, char c)
 	int j;
 	j = 0;
 
-	while(str[i] != c)
+	while(str[i] != '\0')
 	{
-		if(str[i] == '\0')
+		if(str[i] == c)
 			break;
 		i++;
 	}
