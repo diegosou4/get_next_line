@@ -45,29 +45,26 @@ char	*ft_strdup(char *src)
 char    *get_next_line(int fd)
 {
     char *str;
-    char *tmp;
+    char tmp[1];
     char buf[BUFFER_SIZE + 1];
     static int i;
     int j;
     if(fd < 0 || BUFFER_SIZE <= 0)
         return (NULL);
     str = malloc(sizeof(char) * BUFFER_SIZE);
-    j = read(fd, str, BUFFER_SIZE);
-    while(str[0] && str[i] != '\n')
+    while(i < BUFFER_SIZE)
     {
-        if(str[i] == '\0')
-            break;
-        buf[i] = str[i];
+        j = read(fd,tmp, 1);
+        tmp[1] == '\0';
+        if(tmp[0] != '\n' && j > 0)
+        {
+            str[i] = tmp[0];
+        }
         i++;
     }
-    if(str[i] == '\n')
-    {
-        buf[i] = str[i];
-        i++;
-    }
-    buf[i] = '\0';
-    tmp = ft_strdup(buf);
-    return (tmp);
+    str[i] = '\0';
+    str = ft_strdup(str);
+    return (str);
 
 }
 
@@ -78,7 +75,7 @@ int main()
         int fd = open("string.txt", O_RDONLY);
         char *str = get_next_line(fd);
         printf("%s", str);
-        printf("%s", get_next_line(fd));
+        printf("%s teste", get_next_line(fd));
 
 
 }
