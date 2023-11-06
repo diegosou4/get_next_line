@@ -14,3 +14,56 @@
 
 
 
+size_t	ft_strlen(const char *str)
+{
+	size_t	i;
+
+	i = 0;
+	while (str[i] != '\0')
+	{
+		i++;
+	}
+	return (i);
+}
+
+char	*ft_strdup(char *src)
+{
+	char	*dest;
+	size_t	size;
+	size_t	i;
+
+	i = 0;
+	size = ft_strlen((char *)src);
+	dest = (char *)calloc((size + 1), sizeof(char));
+	if (!dest)
+		return (NULL);
+	while (i < size)
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	free(src);
+	return (dest);
+}
+
+char *ft_finder(char *str, char c)
+{
+	int i;
+	i = 0;
+	char *strr;
+
+	while(str[i] != c)
+	{
+		i++;
+	}
+	i++;
+	strr = (char *)calloc(sizeof(char) , (i + 1));
+	if(!strr)
+		return (NULL);
+	while(i < 0)
+	{
+		strr[i] = str[i];
+		i--;
+	}
+	return (strr);
+}

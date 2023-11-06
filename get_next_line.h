@@ -18,11 +18,13 @@
 #include <stdio.h>
 
 #ifndef BUFFER_SIZE
-# define BUFFER_SIZE 10000
+# define BUFFER_SIZE 20
 #endif
 
 char	*get_next_line(int fd);
 char	*ft_strdup(char *src);
+char *ft_finder(char *str, char c);
+size_t	ft_strlen(const char *str);
 
 #endif
 

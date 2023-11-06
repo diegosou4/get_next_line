@@ -11,69 +11,25 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-size_t	ft_strlen(const char *str)
-{
-	size_t	i;
-
-	i = 0;
-	while (str[i] != '\0')
-	{
-		i++;
-	}
-	return (i);
-}
-
-char	*ft_strdup(char *src)
-{
-	char	*dest;
-	size_t	size;
-	size_t	i;
-
-	i = 0;
-	size = ft_strlen((char *)src);
-	dest = (char *)calloc((size + 1), sizeof(char));
-	if (!dest)
-		return (NULL);
-	while (i < size)
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	return (dest);
-}
 
 char    *get_next_line(int fd)
 {
-    char *str;
-    char *tmp;
+    static char *str[BUFFER_SIZE + 1];
     static int i;
-    int k;
-    k = 0;
-    int j;
-    if(fd < 0 || BUFFER_SIZE <= 0 || i > BUFFER_SIZE)
+    char *strr;
+    if(fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
         return (NULL);
-    tmp = calloc(2, sizeof(char));
-    str = malloc(sizeof(char) * BUFFER_SIZE + 1);
-    while(i <= BUFFER_SIZE)
+   if(read(fd, str, BUFFER_SIZE) > 0)
     {
-        j = read(fd,tmp, 1);
-        if(tmp[0] != '\n' && j > 0)
-        {
-            str[k] = tmp[0];
-        }
-        if(tmp[0] == '\n')
-        {
-            str[k] = '\n';
-            i++;
-            k++;
-            break;
-        }   
-        i++;
-        k++;
+        strr = ft_finder(*str, '\n');
+        i += ft_strlen((const char *)strr);
+        return (strr);
+    }else
+    {
+        strr = ft_finder(*str + i, '\n');
+        return (strr);
     }
-    str[k] = '\0';
-    str = ft_strdup(str);
-    return (str);
+    return (NULL);
 }
 
 
@@ -81,12 +37,10 @@ int main()
 {
     
         int fd = open("string.txt", O_RDONLY);
-        char *str = get_next_line(fd);
-        printf("%s", str);
         printf("%s", get_next_line(fd));
-        printf("%s", get_next_line(fd));
-        printf("%s", get_next_line(fd));
-        printf("%s", get_next_line(fd));
-        printf("%s", get_next_line(fd));
+  
+
+        close(fd);
+      
 
 }
