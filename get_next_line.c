@@ -14,22 +14,25 @@
 
 char    *get_next_line(int fd)
 {
-    static char *str[BUFFER_SIZE + 1];
+    static char str[BUFFER_SIZE + 1];
     static int i;
+    int j;
     char *strr;
     if(fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
         return (NULL);
-   if(read(fd, str, BUFFER_SIZE) > 0)
+   if((j = read(fd, str, BUFFER_SIZE)) > 0)
     {
-        strr = ft_finder(*str, '\n');
+        str[j] = '\0';
+        strr = ft_finder(str, '\n');
         i += ft_strlen((const char *)strr);
         return (strr);
     }else
     {
-        strr = ft_finder(*str + i, '\n');
+        strr = ft_finder(str + i, '\n');
+        i += ft_strlen((const char *)strr);
         return (strr);
     }
-    return (NULL);
+    return ("\n TESTE");
 }
 
 

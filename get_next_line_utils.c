@@ -60,10 +60,11 @@ char *ft_finder(char *str, char c)
 	strr = (char *)calloc(sizeof(char) , (i + 1));
 	if(!strr)
 		return (NULL);
-	while(i < 0)
+	while(i != 0)
 	{
 		strr[i] = str[i];
 		i--;
 	}
+	printf("%s aqui", strr);
 	return (strr);
 }
