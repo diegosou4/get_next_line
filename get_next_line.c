@@ -6,7 +6,7 @@
 /*   By: diemorei <diemorei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 16:52:58 by diegmore          #+#    #+#             */
-/*   Updated: 2023/11/07 11:38:23 by diemorei         ###   ########.fr       */
+/*   Updated: 2023/11/07 11:59:48 by diemorei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,8 @@ char *ft_finder(char *str, char c)
 	char *strr;
 	int j;
 	j = 0;
-
+	if(str == NULL)
+		return (NULL);
 	while(str[i] != '\0')
 	{
 		if(str[i] == c)
@@ -106,7 +107,7 @@ char *ft_finder(char *str, char c)
 		i++;
 	}
 	i++;
-	strr = (char *)calloc(sizeof(char) , i );
+	strr = (char *)malloc(sizeof(char) * i );
 	if(!strr)
 		return (NULL);
 	while(j != i)
@@ -114,6 +115,8 @@ char *ft_finder(char *str, char c)
 		strr[j] = str[j];
 		j++;;
 	}
+	strr[i]	= '\0';
+	
 	return (strr);
 }
 
@@ -123,9 +126,9 @@ char    *get_next_line(int fd)
     static char *str;
     int j;
     char *tmp;
-
+	
 	strori = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
-    if(fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+    if(fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0 || strori == NULL)
         return (NULL);
     while((j = read(fd, strori, BUFFER_SIZE)) > 0)
 	{
@@ -139,11 +142,13 @@ char    *get_next_line(int fd)
 			str = ft_strjoin(str, strori);
 	}
 	tmp = ft_finder(str, '\n');
-	str =  ft_strchr(str, '\n');
 	if(tmp != NULL)
 	{
+		str =  ft_strchr(str, '\n');
 		return (tmp);
-	}
+	} 
+	free(str);
+	free(strori);
     return (NULL);
 }
 
@@ -152,12 +157,13 @@ int main()
 {
     
         int fd = open("string.txt", O_RDONLY);
-        /*
+        
 		printf("[LINHA 1] %s", get_next_line(fd));
         printf("[LINHA 2] %s", get_next_line(fd));
-        printf("[LINHA 3] %s", get_next_line(fd));
+        printf("[LINHA 3] %s  barra ene\n", get_next_line(fd));
         printf("[LINHA 4] %s", get_next_line(fd));
-        printf("[LINHA 5] %s", get_next_line(fd));
+        /*
+		printf("[LINHA 5] %s", get_next_line(fd));
         printf("[LINHA 6] %s", get_next_line(fd));
         printf("[LINHA 7] %s", get_next_line(fd));
         printf("[LINHA 8] %s", get_next_line(fd));
