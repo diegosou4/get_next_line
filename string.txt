@@ -3,3 +3,11 @@ YUNG BUDA
 NICE
 LINUX
 KALI
+
+
+
+
+
+nossa variavel estatica vai guardar tudo 
+se o read for maior que 0 ele verifica se nossa variavel estatica e nula ou nao se for ela coloca o que foi lido nela .
+depois se nao for ela vai concatenar as duas numa temporaria, vai da free no s e depois s
