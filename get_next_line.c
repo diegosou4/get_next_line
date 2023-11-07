@@ -6,15 +6,15 @@
 /*   By: diemorei <diemorei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 16:52:58 by diegmore          #+#    #+#             */
-/*   Updated: 2023/11/07 11:59:48 by diemorei         ###   ########.fr       */
+/*   Updated: 2023/11/07 14:46:38 by diemorei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(const char *str)
+int	ft_strlen(char *str)
 {
-	size_t	i;
+	int	i;
 
 	i = 0;
 	while (str[i] != '\0')
@@ -23,17 +23,20 @@ size_t	ft_strlen(const char *str)
 	}
 	return (i);
 }
-char	*ft_strchr(const char *str, int c)
+char	*ft_strchr(char *str, int c)
 {
-	size_t	i;
-	size_t	length_s;
+	int	i;
+	int	length_s;
 
-	length_s = ft_strlen((char *)str);
+	length_s = ft_strlen(str);
 	i = 0;
 	while (i < length_s)
 	{
 		if (str[i] == (char)c)
+		{
 			return ((char *)(str +( i + 1)));
+		}
+			
 		i++;
 	}
 	if (str[i] == (char)c)
@@ -49,14 +52,17 @@ char	*ft_strchr(const char *str, int c)
 char	*ft_strdup(char *src)
 {
 	char	*dest;
-	size_t	size;
-	size_t	i;
+	int	size;
+	int	i;
 
 	i = 0;
-	size = ft_strlen((char *)src);
-	dest = (char *)calloc((size + 1), sizeof(char));
+	size = ft_strlen(src);
+	dest = (char *)malloc((size + 1)* sizeof(char));
 	if (!dest)
+	{
+		free(dest);
 		return (NULL);
+	}
 	while (i < size)
 	{
 		dest[i] = src[i];
@@ -65,18 +71,18 @@ char	*ft_strdup(char *src)
 	return (dest);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char  *s1, char  *s2)
 {
-	size_t	size_s1;
-	size_t	size_s2;
-	size_t	i;
-	size_t	j;
+	int	size_s1;
+	int	size_s2;
+	int	i;
+	int	j;
 	char	*new;
 
 	i = 0;
 	j = 0;
-	size_s1 = ft_strlen((char *)s1);
-	size_s2 = ft_strlen((char *)s2);
+	size_s1 = ft_strlen(s1);
+	size_s2 = ft_strlen(s2);
 	new = (char *)malloc(((size_s1 + size_s2) + (1)) * sizeof(char));
 	if (!new || (!s1 && !s2))
 		return (0);
@@ -106,29 +112,28 @@ char *ft_finder(char *str, char c)
 			break;
 		i++;
 	}
-	i++;
-	strr = (char *)malloc(sizeof(char) * i );
+	strr = (char *)malloc(sizeof(char) * (i + 1) );
 	if(!strr)
+	{
 		return (NULL);
-	while(j != i)
+	}	
+	while(j != (i + 1))
 	{
 		strr[j] = str[j];
-		j++;;
+		j++;
 	}
-	strr[i]	= '\0';
-	
+	strr[i + 1]	= '\0';
 	return (strr);
 }
 
 char    *get_next_line(int fd)
 {
-    char *strori;
+    char strori[BUFFER_SIZE + 1];
     static char *str;
     int j;
     char *tmp;
 	
-	strori = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
-    if(fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0 || strori == NULL)
+    if(fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0 )
         return (NULL);
     while((j = read(fd, strori, BUFFER_SIZE)) > 0)
 	{
@@ -136,19 +141,22 @@ char    *get_next_line(int fd)
 		if(!str)
 		{
 			str = ft_strdup(strori);
-			free(strori);
-		}	
+		}
 		else
+		{
+			tmp = str;
 			str = ft_strjoin(str, strori);
+			free(tmp);
+		}
 	}
-	tmp = ft_finder(str, '\n');
+	if (str != NULL)
+		tmp = ft_finder(str, '\n');
 	if(tmp != NULL)
 	{
 		str =  ft_strchr(str, '\n');
 		return (tmp);
 	} 
-	free(str);
-	free(strori);
+    free(str);
     return (NULL);
 }
 
@@ -157,11 +165,12 @@ int main()
 {
     
         int fd = open("string.txt", O_RDONLY);
-        
-		printf("[LINHA 1] %s", get_next_line(fd));
-        printf("[LINHA 2] %s", get_next_line(fd));
-        printf("[LINHA 3] %s  barra ene\n", get_next_line(fd));
-        printf("[LINHA 4] %s", get_next_line(fd));
+        char *str = get_next_line(fd);
+		printf("[LINHA 1] %s", str);
+		free(str);
+      //  printf("[LINHA 2] %s", get_next_line(fd));
+    //    printf("[LINHA 3] %s  barra ene\n", get_next_line(fd));
+       // printf("[LINHA 4] %s", get_next_line(fd));
         /*
 		printf("[LINHA 5] %s", get_next_line(fd));
         printf("[LINHA 6] %s", get_next_line(fd));
@@ -176,5 +185,5 @@ int main()
 		*/
         close(fd);
       
-
+	return (0);
 }

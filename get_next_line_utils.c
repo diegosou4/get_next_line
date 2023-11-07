@@ -6,7 +6,7 @@
 /*   By: diemorei <diemorei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 16:53:23 by diegmore          #+#    #+#             */
-/*   Updated: 2023/11/06 10:43:32 by diemorei         ###   ########.fr       */
+/*   Updated: 2023/11/07 14:32:24 by diemorei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,6 @@
 
 
 
-size_t	ft_strlen(const char *str)
-{
-	size_t	i;
-
-	i = 0;
-	while (str[i] != '\0')
-	{
-		i++;
-	}
-	return (i);
-}
 
 char	*ft_strdup(char *src)
 {
@@ -34,9 +23,12 @@ char	*ft_strdup(char *src)
 
 	i = 0;
 	size = ft_strlen((char *)src);
-	dest = (char *)calloc((size + 1), sizeof(char));
+	dest = (char *)malloc((size + 1)* sizeof(char));
 	if (!dest)
+	{
+		free(dest);
 		return (NULL);
+	}
 	while (i < size)
 	{
 		dest[i] = src[i];
@@ -45,28 +37,3 @@ char	*ft_strdup(char *src)
 	return (dest);
 }
 
-char *ft_finder(char *str, char c)
-{
-	int i;
-	i = 0;
-	char *strr;
-	int j;
-	j = 0;
-
-	while(str[i] != '\0')
-	{
-		if(str[i] == c)
-			break;
-		i++;
-	}
-	i++;
-	strr = (char *)calloc(sizeof(char) , i );
-	if(!strr)
-		return (NULL);
-	while(j != i)
-	{
-		strr[j] = str[j];
-		j++;;
-	}
-	return (strr);
-}
