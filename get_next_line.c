@@ -6,7 +6,7 @@
 /*   By: diemorei <diemorei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 16:52:58 by diegmore          #+#    #+#             */
-/*   Updated: 2023/11/07 18:39:29 by diemorei         ###   ########.fr       */
+/*   Updated: 2023/11/07 19:15:21 by diemorei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ char    *get_next_line(int fd)
 	
     if(fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0 )
         return (NULL);
-    while((j = read(fd, strori, BUFFER_SIZE)) > 0)
+    while((j = read(fd, strori, BUFFER_SIZE)) > 0 ) 
 	{
 		strori[j] = '\0';
 		if(!str)
@@ -168,10 +168,9 @@ int main()
         int fd = open("string.txt", O_RDONLY);
         char *str = get_next_line(fd);
 		
-		printf("[LINHA 1] %s \n", str);
-		free(str);
-       	//printf("[LINHA 2] %s \n", get_next_line(fd));
-    //    printf("[LINHA 3] %s  barra ene\n", get_next_line(fd));
+		printf("[LINHA 1] %s", str);
+      	printf("[LINHA 2] %s", get_next_line(fd));
+     	printf("[LINHA 3] %s", get_next_line(fd));
        // printf("[LINHA 4] %s", get_next_line(fd));
         /*
 		printf("[LINHA 5] %s", get_next_line(fd));
