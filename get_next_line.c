@@ -6,7 +6,7 @@
 /*   By: diemorei <diemorei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 16:52:58 by diegmore          #+#    #+#             */
-/*   Updated: 2023/11/07 14:46:38 by diemorei         ###   ########.fr       */
+/*   Updated: 2023/11/07 18:39:29 by diemorei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,31 +22,6 @@ int	ft_strlen(char *str)
 		i++;
 	}
 	return (i);
-}
-char	*ft_strchr(char *str, int c)
-{
-	int	i;
-	int	length_s;
-
-	length_s = ft_strlen(str);
-	i = 0;
-	while (i < length_s)
-	{
-		if (str[i] == (char)c)
-		{
-			return ((char *)(str +( i + 1)));
-		}
-			
-		i++;
-	}
-	if (str[i] == (char)c)
-	{
-		return ((char *)(str + length_s));
-	}
-	else
-	{
-		return (NULL);
-	}
 }
 
 char	*ft_strdup(char *src)
@@ -68,6 +43,7 @@ char	*ft_strdup(char *src)
 		dest[i] = src[i];
 		i++;
 	}
+	dest[i] = '\0';
 	return (dest);
 }
 
@@ -97,33 +73,59 @@ char	*ft_strjoin(char  *s1, char  *s2)
 	return (new);
 }
 
-char *ft_finder(char *str, char c)
+char *ft_finder(char *str)
 {
 	int i;
+	char *n_str;
 	i = 0;
-	char *strr;
-	int j;
-	j = 0;
 	if(str == NULL)
-		return (NULL);
-	while(str[i] != '\0')
+		return (0);
+	while(str[i] != '\0')	
 	{
-		if(str[i] == c)
+		if(str[i] == '\n')
+		{
+			i++;
 			break;
+		}	
 		i++;
 	}
-	strr = (char *)malloc(sizeof(char) * (i + 1) );
-	if(!strr)
-	{
+	n_str = (char *) malloc(sizeof(char) * i);
+	if(n_str == NULL)
 		return (NULL);
-	}	
-	while(j != (i + 1))
+	n_str[i] = '\0';
+	while(i-- > 0)
 	{
-		strr[j] = str[j];
-		j++;
+		n_str[i] = str[i];
 	}
-	strr[i + 1]	= '\0';
-	return (strr);
+	return(n_str);
+}
+
+char	*ft_substr(char  *s, int start, int len)
+{
+	int	i;
+	int	len_s;
+	char	*subs;
+	char	*subre;
+
+	if (!s)
+		return (NULL);
+	if(start == len)
+		return(NULL);
+	len_s = ft_strlen((char *)s);
+	i = 0;
+	subs = (char *)malloc((len + 1) * sizeof(char));
+	if (!subs)
+		return (NULL);
+	while (i < len && start < len_s)
+	{
+		subs[i] = s[start];
+		i++;
+		start++;
+	}
+	subs[i] = '\0';
+	subre = ft_strdup(subs);
+	free(subs);
+	return (subre);
 }
 
 char    *get_next_line(int fd)
@@ -132,6 +134,7 @@ char    *get_next_line(int fd)
     static char *str;
     int j;
     char *tmp;
+	char *n;
 	
     if(fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0 )
         return (NULL);
@@ -139,9 +142,7 @@ char    *get_next_line(int fd)
 	{
 		strori[j] = '\0';
 		if(!str)
-		{
 			str = ft_strdup(strori);
-		}
 		else
 		{
 			tmp = str;
@@ -149,14 +150,14 @@ char    *get_next_line(int fd)
 			free(tmp);
 		}
 	}
-	if (str != NULL)
-		tmp = ft_finder(str, '\n');
-	if(tmp != NULL)
+	if(str != NULL)
 	{
-		str =  ft_strchr(str, '\n');
-		return (tmp);
-	} 
-    free(str);
+		tmp = ft_finder(str);
+		n = str;
+		str = ft_substr(str, ft_strlen(tmp),ft_strlen(str));
+		free(n);
+		return(tmp);
+	}
     return (NULL);
 }
 
@@ -167,9 +168,9 @@ int main()
         int fd = open("string.txt", O_RDONLY);
         char *str = get_next_line(fd);
 		
-		printf("[LINHA 1] %s  tamanho%i", str, ft_strlen(str));
+		printf("[LINHA 1] %s \n", str);
 		free(str);
-      //  printf("[LINHA 2] %s", get_next_line(fd));
+       	//printf("[LINHA 2] %s \n", get_next_line(fd));
     //    printf("[LINHA 3] %s  barra ene\n", get_next_line(fd));
        // printf("[LINHA 4] %s", get_next_line(fd));
         /*

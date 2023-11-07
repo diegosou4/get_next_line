@@ -6,7 +6,7 @@
 /*   By: diemorei <diemorei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 16:50:55 by diegmore          #+#    #+#             */
-/*   Updated: 2023/11/07 14:32:28 by diemorei         ###   ########.fr       */
+/*   Updated: 2023/11/07 18:33:49 by diemorei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,10 @@
 #endif
 
 char	*get_next_line(int fd);
-char	*ft_strdup(char *src);
-char *ft_finder(char *str, char c);
 int	ft_strlen(char *str);
+char	*ft_strdup(char *src);
+char *ft_finder(char *str);
+
 
 #endif
 
