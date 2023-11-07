@@ -166,7 +166,8 @@ int main()
     
         int fd = open("string.txt", O_RDONLY);
         char *str = get_next_line(fd);
-		printf("[LINHA 1] %s", str);
+		
+		printf("[LINHA 1] %s  tamanho%i", str, ft_strlen(str));
 		free(str);
       //  printf("[LINHA 2] %s", get_next_line(fd));
     //    printf("[LINHA 3] %s  barra ene\n", get_next_line(fd));
