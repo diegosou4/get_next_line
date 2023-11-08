@@ -1,11 +1,131 @@
 #include "get_next_line.h"
 
-int ft_strlen(char *str)
+int     ft_strlen(char *str)
 {
-    int i = 0;
-    while(str[i] != '\0')
+        int     i;
+
+        i = 0;
+        while (str[i] != '\0')
+        {
+                i++;
+        }
+        return (i);
+}
+
+char    *ft_strjoin(char  *s1, char  *s2)
+{
+        int     size_s1;
+        int     size_s2;
+        int     i;
+        int     j;
+        char    *new;
+
+        i = 0;
+        j = 0;
+        size_s1 = ft_strlen(s1);
+        size_s2 = ft_strlen(s2);
+        if(!s1 || !s2)
+            return(NULL);
+        new = (char *)malloc(((size_s1 + size_s2) + (1)) * sizeof(char));
+        if (!new)
+                return (0);
+        while (s1[i] != '\0')
+        {
+                new[i] = s1[i];
+                i++;
+        }
+        while (s2[j] != '\0')
+                new[i++] = s2[j++];
+        new[i] = '\0';
+        return (new);
+}
+
+char    *ft_strdup(char *src)
+{
+        char    *dest;
+        int     size;
+        int     i;
+
+        i = 0;
+        size = ft_strlen(src);
+        dest = (char *)malloc((size + 1)* sizeof(char));
+        if (!dest)
+        {
+                free(dest);
+                return (NULL);
+        }
+        while (i < size)
+        {
+                dest[i] = src[i];
+                i++;
+        }
+        dest[i] = '\0';
+        return (dest);
+}
+
+int readandgive(char **str, char *buffer, int fd)
+{
+    int j;
+    char *tmp;
+    j = 0;
+    if((j = read(fd, buffer, BUFFER_SIZE)) > 0)
+    {
+        buffer[j] = '\0';
+        if(!(*str))
+            (*str) = ft_strdup(buffer);
+        else
+        {
+            tmp = (*str);
+            (*str) = ft_strjoin((*str),buffer);
+            free(tmp);
+        }
+    } 
+    return(j);
+}
+
+int ft_strrchr(char *buffer)
+{
+    int i;
+    i = 0;
+    while(buffer[i] != '\0')
+    {
+        if(buffer[i] == '\n')
+            return (1);
         i++;
-    return(i);
+    }
+
+    return(0);
+}
+
+void ft_finder(char **str, char **linereturn)
+{
+    int i;
+    char *n_str;
+    int j;
+    i = 0;
+    if(*str == NULL)
+        return;
+    while((*str)[i] != '\0')
+    {
+            if((*str)[i] == '\n')
+            {
+                n_str = malloc(sizeof(char) * (i + 2));
+                if(!n_str)
+                    return;
+                j = 0;
+                while(j < i)
+                {
+                     n_str[j] = (*str)[j];
+                     j++;
+                }
+                n_str[j] = '\0';
+                *linereturn = ft_strdup(n_str);
+                free(n_str);
+                return;
+            }
+            i++;
+    }
+    *linereturn = ft_strdup((*str));
 }
 
 char    *ft_substr(char *s, int start, int len)
@@ -33,158 +153,49 @@ char    *ft_substr(char *s, int start, int len)
     return subs;
 }
 
-char *ft_strdup(char *buffer)
+char    *get_next_line(int fd)
 {
-    char *str;
-    int j;
-    int i;
-    i = ft_strlen(buffer);
-    j = 0;
-    str  = (char *) malloc(sizeof(char) * (i + 1));
-    if(str == NULL)
-        return(NULL);
-    while(j < i)
-    {
-        str[j] = buffer[j];
-        j++;
-    }
-    str[i] = '\0';
-    return str;
-}
-
-int ft_strrchr(char *buffer, int j)
-{
-    int i;
-    i = 0;
-    buffer[j] = '\0';
-    while(buffer[i] != '\0')
-    {
-        if(buffer[i] == '\n')
-            return (1);
-        i++;
-    }
-
-    return(0);
-}
-
-int	ft_strrchr_v(char **str, char **tmp)
-{
-	int	i;
-    int j;
-    j = 0;
-	i = 0;
-	while ((*str)[i])
-    {
-		if ((*str)[i] == '\n')
-            {
-                i++;
-                (*tmp) =  (char *) malloc(sizeof(char) * i );
-                while(j < i)
-                {
-                    (*tmp)[j] = (*str)[j];
-                    j++;
-                }
-                (*tmp)[j] = '\0';
-                (*str) = ft_substr((*str),i, ft_strlen(*str));
-                if((*str) == NULL)
-                {
-                    return(0);
-                } else {
-                    return (1);
-                }
-            }
-        i++;
-	}
-    (*tmp) = ft_strdup((*str));
-	return (0);
-}
-
-
-
-char	*ft_strjoin(char *s1, char *s2)
-{
-	size_t	size_s1;
-	size_t	size_s2;
-	size_t	i;
-	size_t	j;
-	char	*new;
-
-	i = 0;
-	j = 0;
-    if (s1 == NULL && s2 == NULL)
-    {
-        return (NULL);
-     }
-	size_s1 = ft_strlen(s1);
-	size_s2 = ft_strlen(s2);
-	new = (char *)malloc(((size_s1 + size_s2) + (1)) * sizeof(char));
-	if (!new )
-		return (0);
-	while (s1[i] != '\0')
-	{
-		new[i] = s1[i];
-		i++;
-	}
-	while (s2[j] != '\0')
-		new[i++] = s2[j++];
-	new[i] = '\0';
-	return (new);
-}
-
-int readline(int fd, char *buffer, char **str)
-{
-    int j;
-    char *s;
-    j = 0;
-    while((j = read(fd, buffer, BUFFER_SIZE)) > 0 && ft_strrchr(buffer, j) != 0)
-    {
-        buffer[j] = '\0';
-            if(*str == NULL)
-            {
-                *str = ft_strdup(buffer);
-            }
-            else
-            {
-                s = (*str);
-                (*str) = ft_strjoin(*str,buffer);
-                free(s);
-                if((*str))
-                    return(NULL);
-            }
-    }   
-    if(j == -1)
-    {
-        if(*str != NULL)
-             free((*str));
-     return (-1);
-    }
-    return (j);
-}
-
-char *get_next_line(int fd)
-{
+    // Declaracao de variaveis
     char buffer[BUFFER_SIZE + 1];
     static char *str;
     char *tmp;
-
-    if(fd < 0 || BUFFER_SIZE <= 0)
-        return(NULL);
-
-    if(readline(fd, buffer, &str) == -1)
-            return (NULL);
-    ft_strrchr_v(&str, &tmp);        
-    return(tmp);
+    char *s;
+    // Protecao 
+    if(fd < 0 || BUFFER_SIZE <= 0 )
+        return (NULL);
+    while(readandgive(&str,buffer,fd) > 0)
+    {
+        if(ft_strrchr(str))
+            break;
+    }
+    if(str)
+    {
+        ft_finder(&str, &tmp);
+        s = str;
+        str = ft_substr(str, ft_strlen(tmp), ft_strlen(str));
+        free(s);
+        return(tmp);
+    }
+    return(NULL);
 }
 
-int main(void)
+int	main(void)
 {
-    int fd = open("string.txt", O_RDONLY);
-    char *s = get_next_line(fd);
-    printf("%s", s);
-    free(s);
-    s = get_next_line(fd);
-    printf("%s", s);
-    free(s);
-    close(fd);
-    return 0;
+	char	*line;
+	int		fd;
+	int		i;
+
+	fd = open("string.txt", O_RDONLY);
+	//printf("\nFile Descriptor: %d\n\n", fd);
+	i = 1;
+	while (i <= 5)
+	{
+		line = get_next_line(fd);
+		printf("%s", line);
+		free(line);
+		i++;
+	}
+	//printf("\nReturn value of read: %zd", read(fd, line, BUFFER_SIZE));
+	close(fd);
+	return (0);
 }
