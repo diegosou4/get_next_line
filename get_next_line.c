@@ -96,12 +96,28 @@ int ft_strrchr(char *buffer)
 
     return(0);
 }
+char	*ft_strlcpy(char *src, int dstsize)
+{
+	int	index;
+    char *dest;
+
+    dest = (char *)malloc(sizeof(char) * dstsize);
+	index = 0;
+	if (dstsize == 0)
+		return (NULL);
+	while (src[index] && index < dstsize - 1)
+	{
+		dest[index] = src[index];
+		index++;
+	}
+	dest[index] = '\0';
+	return (dest);
+}
 
 void ft_finder(char **str, char **linereturn)
 {
     int i;
     char *n_str;
-    int j;
     i = 0;
     if(*str == NULL)
         return;
@@ -109,23 +125,13 @@ void ft_finder(char **str, char **linereturn)
     {
             if((*str)[i] == '\n')
             {
-                n_str = malloc(sizeof(char) * (i + 2));
-                if(!n_str)
-                    return;
-                j = 0;
-                while(j < i)
-                {
-                     n_str[j] = (*str)[j];
-                     j++;
-                }
-                n_str[j] = '\0';
-                *linereturn = ft_strdup(n_str);
-                free(n_str);
+                n_str = ft_strlcpy((*str), i + 2);
+                (*linereturn) = n_str;
                 return;
             }
             i++;
     }
-    *linereturn = ft_strdup((*str));
+    (*linereturn) = ft_strdup((*str));
 }
 
 char    *ft_substr(char *s, int start, int len)
@@ -155,12 +161,11 @@ char    *ft_substr(char *s, int start, int len)
 
 char    *get_next_line(int fd)
 {
-    // Declaracao de variaveis
     char buffer[BUFFER_SIZE + 1];
     static char *str;
     char *tmp;
     char *s;
-    // Protecao 
+
     if(fd < 0 || BUFFER_SIZE <= 0 )
         return (NULL);
     while(readandgive(&str,buffer,fd) > 0)
@@ -172,9 +177,15 @@ char    *get_next_line(int fd)
     {
         ft_finder(&str, &tmp);
         s = str;
-        str = ft_substr(str, ft_strlen(tmp), ft_strlen(str));
-        free(s);
-        return(tmp);
+        if (tmp) {
+            str = ft_substr(str, ft_strlen(tmp), ft_strlen(str));
+            free(s);
+            return(tmp);
+        } else {
+            tmp = str;
+            free(str);
+            return(tmp);
+        }
     }
     return(NULL);
 }
