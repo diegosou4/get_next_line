@@ -14,113 +14,100 @@ size_t     ft_strlen(char *str)
         return (i);
 }
 
-int 	ft_strchr(char *str, char c)
+char	*ft_strchr(char *s, int c)
 {
 	size_t	i;
-	size_t	length_s;
 
-    if(!str)
-        return(0);
-	
-    length_s = ft_strlen(str);
-	i = 0;
-	while (i < length_s)
+	if (!s)
+		return (NULL);
+	if (c == 0)
 	{
-		if (str[i] == c)
-			return (1);
+		i = ft_strlen((char *)s);
+		return (&s[i]);
+	}
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] == (char) c)
+			return (&s[i]);
 		i++;
 	}
-		return (0);
+	return (NULL);
 }
-char *ft_join(char *buff, char *rest)
+char *ft_join(char *dest,char *buff, char *rest)
 {
-    char *str;
     size_t i;
     size_t j;
     size_t len;
 
     i = 0;
     j = 0;
-    len = ft_strlen(buff) + ft_strlen(rest) + 1; 
-
-    str = (char *) malloc(sizeof(char) * len);
-    if(!str)
+   
+    len = ft_strlen(buff) + (ft_strlen(rest) + 1);
+    dest = (char *) malloc(sizeof(char) * len);
+    if(!dest)
         return(NULL);
     while(rest && rest[j])
     {
-        str[j] = rest[j];
+        dest[j] = rest[j];
         j++;
     }
     while(buff && buff[i])
     {
-        str[j] = buff[i];
+        dest[j] = buff[i];
         i++;
         j++;
     }
-    str[j] = '\0';
-    return(str);
+    dest[j] = '\0';
+    return(dest);
 }
-char    *ft_strjoin(char *buff, char *rest)
+char    *ft_strjoin(char *rest, char *buff)
 {
     char *str;
+    char *tmp;
      if(!rest && !buff)
         return (NULL);
     if(!rest)
     {
         rest = (char *) malloc(sizeof(char) * 1);
-        if(!rest)
-        {
-            return(NULL);
-        }
         rest[0] = '\0';
     }
-    str = ft_join(buff, rest);
+    str = (char *)malloc((1 + ft_strlen(rest)) + ft_strlen(buff) * sizeof(char));
     if(!str)
         return(NULL);
+    tmp = str;
+    str = ft_join(str,buff, rest);
+    free(tmp);
+    free(rest);
+    return(str);
+}
 
-    return(str);
-}
-char *ft_returntmp(char *rest, int i)
-{
-    char *str;
-    int j;
-    j = 0;
-    str = (char *) malloc(sizeof(char) * i);
-    if(!str)
-        return(NULL);
-    while(j < i)
-    {
-        str[j] = rest[j];
-        j++;
-    }
-    str[j] = '\0';
-    return(str);
-}
+
 char    *ft_return(char *rest)
 {
     int i;
-    i = 0;
     char *str;
-
-    if(!rest)
+    i = 0;
+    if(!rest || !rest[0])
+        return(NULL);
+    while(rest[i] && rest[i] != '\n')
+        i++;
+    if(rest[i] == '\n')
+        i++;
+    str = (char *) malloc( sizeof(char) * (i + 1));
+    if(!str)
+        return(NULL);
+    i = 0;
+    while(rest[i] && rest[i] != '\n')
     {
-        str = (char *) malloc(sizeof(char) * 1);
-        if(!str)
-            return(NULL);
-        str[0] = '\0';
-        return(str);
-    }
-    while(rest[i] != '\0')
-    {
-        if(rest[i] == '\n')
-            break;
+        str[i] = rest[i];
         i++;
     }
     if(rest[i] == '\n')
-        i++;
-    str = ft_returntmp(rest,i);
+        str[i++] = '\0';
+    else
+        str[i] = '\0';
     return(str);
-
 }
 
 char *clearmyrest(char *rest)
@@ -136,15 +123,16 @@ char *clearmyrest(char *rest)
         i++;
     if(rest[i] == '\n')
         i++;
-    str = (char *) malloc(sizeof(char) * i);
+    str = (char *) malloc(sizeof(char) * i + 1);
     if(!str)  
         return(NULL);
-    while(j < i)
+    while(j < i && rest[j + i])
     {
         str[j] = rest[j + i];
         j++;
     }
     str[j] = '\0';
+    free(rest);
     return(str);
 }   
 char *get_next_line(int fd)
@@ -157,19 +145,19 @@ char *get_next_line(int fd)
 
     if(fd < 0 || BUFFER_SIZE <= 0)
         return (NULL);
-    tmp = (char *) malloc(sizeof(char) *( BUFFER_SIZE + 1));
+    tmp = (char *) malloc(sizeof(char) *(BUFFER_SIZE + 1));
     if(!tmp)
         return(NULL);
-    while(line_read != 0 && (ft_strchr(rest, '\n' != 1)))
+    while (!(ft_strchr(rest, '\n')) && line_read != 0)
     {
     line_read = read(fd,tmp,BUFFER_SIZE);
-    if(line_read < 0)
+    if(line_read == -1)
     {
         free(tmp);
         return(NULL);
     }
     tmp[line_read] = '\0';
-    rest = ft_strjoin(tmp,rest);
+    rest = ft_strjoin(rest,tmp);
     }
     free(tmp);
     tmp = ft_return(rest);
@@ -185,9 +173,9 @@ int	main(void)
 
 	fd = open("string.txt", O_RDONLY);
 	//printf("\nFile Descriptor: %d\n\n", fd);
-		line = get_next_line(fd);
-		printf("%s", line);
-		free(line);
+	line = get_next_line(fd);
+	printf("%s", line);
+	free(line);
 	//printf("\nReturn value of read: %zd", read(fd, line, BUFFER_SIZE));
 	close(fd);
 	return (0);
