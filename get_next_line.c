@@ -5,6 +5,8 @@ size_t     ft_strlen(char *str)
 {
         size_t     i;
         i = 0;
+        if(!str[i])
+            return(0);
         while (str[i] != '\0')
         {
                 i++;
@@ -12,195 +14,170 @@ size_t     ft_strlen(char *str)
         return (i);
 }
 
-int ft_strchr(char *buffer)
+int 	ft_strchr(char *str, char c)
 {
+	size_t	i;
+	size_t	length_s;
+
+    if(!str)
+        return(0);
+	
+    length_s = ft_strlen(str);
+	i = 0;
+	while (i < length_s)
+	{
+		if (str[i] == c)
+			return (1);
+		i++;
+	}
+		return (0);
+}
+char *ft_join(char *buff, char *rest)
+{
+    char *str;
     size_t i;
+    size_t j;
+    size_t len;
+
     i = 0;
-    while(buffer[i] != '\0')
+    j = 0;
+    len = ft_strlen(buff) + ft_strlen(rest) + 1; 
+
+    str = (char *) malloc(sizeof(char) * len);
+    if(!str)
+        return(NULL);
+    while(rest && rest[j])
     {
-        if(buffer[i] == '\n')
-            return (1);
-        i++;
+        str[j] = rest[j];
+        j++;
     }
-
-    return(0);
+    while(buff && buff[i])
+    {
+        str[j] = buff[i];
+        i++;
+        j++;
+    }
+    str[j] = '\0';
+    return(str);
 }
-
-char    *ft_strdup(char *src)
+char    *ft_strjoin(char *buff, char *rest)
 {
-        char    *dest;
-        size_t     size;
-        size_t     i;
+    char *str;
+     if(!rest && !buff)
+        return (NULL);
+    if(!rest)
+    {
+        rest = (char *) malloc(sizeof(char) * 1);
+        if(!rest)
+        {
+            return(NULL);
+        }
+        rest[0] = '\0';
+    }
+    str = ft_join(buff, rest);
+    if(!str)
+        return(NULL);
 
-        i = 0;
-        size = ft_strlen(src);
-        dest = (char *)malloc((size + 1)* sizeof(char));
-        if (!dest)
-        {
-                free(dest);
-                return (NULL);
-        }
-        while (i < size)
-        {
-                dest[i] = src[i];
-                i++;
-        }
-        dest[i] = '\0';
-        return (dest);
+    return(str);
 }
-
-
-char    *ft_strjoin(char  *s1, char  *s2)
+char *ft_returntmp(char *rest, int i)
 {
-        size_t     size_s1;
-        size_t     size_s2;
-        size_t     i;
-        size_t     j;
-        char    *new;
-
-        i = 0;
-        j = 0;
-        size_s1 = ft_strlen(s1);
-        size_s2 = ft_strlen(s2);
-        new = (char *)malloc(((size_s1 + size_s2) + (1)) * sizeof(char));
-        if (!new)
-                return (0);
-        while (s1[i] != '\0')
-        {
-                new[i] = s1[i];
-                i++;
-        }
-        while (s2[j] != '\0')
-                new[i++] = s2[j++];
-        new[i] = '\0';
-        return (new);
-}
-
-void    readandreturn(int fd, char **rest)
-{
+    char *str;
     int j;
+    j = 0;
+    str = (char *) malloc(sizeof(char) * i);
+    if(!str)
+        return(NULL);
+    while(j < i)
+    {
+        str[j] = rest[j];
+        j++;
+    }
+    str[j] = '\0';
+    return(str);
+}
+char    *ft_return(char *rest)
+{
     int i;
-    char *p;
-    char *d;
-    i = 1;
-  
-    while(i == 1)
+    i = 0;
+    char *str;
+
+    if(!rest)
     {
-        p = (char *) malloc(sizeof(char) * (BUFFER_SIZE + 1));
-        if(p == NULL)
-        {
-            free((*rest));
-            return;
-        }
-        
-        j = read(fd,p,BUFFER_SIZE);
-        if(j == 0)
-            i = 0;
-        if(j == - 1)
-        {
-            free(p);
-            return;
-        }
-            
-        p[j] = '\0';
-        if(j > 0)
-        {
-           if((*rest) == NULL)
-              (*rest) = ft_strdup(p);
-            else
-            {
-                d = (*rest);
-                (*rest) = ft_strjoin((*rest), p);
-                free(d);
-            }
-            if (ft_strchr((*rest)) == 1)
-                i = 0;
-            else 
-                i = 1;
-        }
-           free(p);
+        str = (char *) malloc(sizeof(char) * 1);
+        if(!str)
+            return(NULL);
+        str[0] = '\0';
+        return(str);
     }
-
-}
-
-
-char    *ft_substr(char *s, int start, int len)
-{
-   char *str;
-   int i;
-   i = 0;
-   int cal;
-
-   cal = len - start; 
-   str = (char *)malloc(sizeof(char) * cal + 1);
-   if(!str)
-    return(0);
-
-  while(i < cal)
+    while(rest[i] != '\0')
     {
-        str[i] = s[start];
+        if(rest[i] == '\n')
+            break;
         i++;
-        start++;
     }
-    str[i] = '\0';
-    return (str);
+    if(rest[i] == '\n')
+        i++;
+    str = ft_returntmp(rest,i);
+    return(str);
+
 }
 
-
-void cleanandreturn(char **rest, char **buf)
+char *clearmyrest(char *rest)
 {
-    char *tmp;
+    char *str;
     int i;
     int j;
     j = 0;
     i = 0;
-    while((*rest)[i] != '\0')
-    {
-            if((*rest)[i] == '\n')
-                {
-                    i++;
-                    break;
-                }
-            i++;
-    }
-    (*buf) = (char *) malloc(sizeof(char) * i + 1);
-    if(!(*buf))
-    {
-        free((*rest));
-        return;
-    }
+    if(!rest)
+        return(NULL);
+    while(rest[i] != '\n' && rest[i])
+        i++;
+    if(rest[i] == '\n')
+        i++;
+    str = (char *) malloc(sizeof(char) * i);
+    if(!str)  
+        return(NULL);
     while(j < i)
     {
-        (*buf)[j] = (*rest)[j];
+        str[j] = rest[j + i];
         j++;
     }
-    (*buf)[j] = '\0';
-    tmp = (*rest);
-    (*rest) = ft_substr(tmp,j,ft_strlen(tmp));
-    free(tmp);
-
-}
-
-
-
-
+    str[j] = '\0';
+    return(str);
+}   
 char *get_next_line(int fd)
 {
     static char *rest;
-    char *buf;
+    char *tmp;
+    int line_read;
 
-    
+    line_read = 1;
 
-    if(fd < 0 || BUFFER_SIZE <= 0 )
+    if(fd < 0 || BUFFER_SIZE <= 0)
         return (NULL);
-
-    readandreturn(fd,&rest);
-    cleanandreturn(&rest, &buf);
-    return(buf);
-
+    tmp = (char *) malloc(sizeof(char) *( BUFFER_SIZE + 1));
+    if(!tmp)
+        return(NULL);
+    while(line_read != 0 && (ft_strchr(rest, '\n' != 1)))
+    {
+    line_read = read(fd,tmp,BUFFER_SIZE);
+    if(line_read < 0)
+    {
+        free(tmp);
+        return(NULL);
+    }
+    tmp[line_read] = '\0';
+    rest = ft_strjoin(tmp,rest);
+    }
+    free(tmp);
+    tmp = ft_return(rest);
+    rest = clearmyrest(rest);
+    return(tmp);
 }
 
-/*
+
 int	main(void)
 {
 	char	*line;
@@ -211,13 +188,7 @@ int	main(void)
 		line = get_next_line(fd);
 		printf("%s", line);
 		free(line);
-        line = get_next_line(fd);
-		printf("%s", line);
-		free(line);
-        line = get_next_line(fd);
-		printf("%s", line);
-		free(line);
 	//printf("\nReturn value of read: %zd", read(fd, line, BUFFER_SIZE));
 	close(fd);
 	return (0);
-}*/
+}
