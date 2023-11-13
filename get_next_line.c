@@ -112,9 +112,13 @@ char	*ft_substr(char  *str,int start, int len_str)
 	char	*subs;
     int sum;
     i = 0;
-	if (!str)
-		return (NULL);
     sum = len_str - start;
+    if(sum == 0 || !str)
+    {
+        free(str);
+        return(NULL);
+    }
+
     subs = (char *) malloc(sizeof(char) * (sum + 1));
     if(!subs)
         return(NULL);
