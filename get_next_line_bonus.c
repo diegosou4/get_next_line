@@ -1,5 +1,4 @@
-#include "get_next_line.h"
-
+#include "get_next_line_bonus.h"
 
 int ft_strlen(char *str)
 {
@@ -138,7 +137,7 @@ void ft_free(char **str, char *buffer)
 
 char *get_next_line(int fd)
 {
-    static char *str;
+    static char *str[FD_MAX];
     char *buffer;
     int bytes_read;
     bytes_read = 1;
@@ -148,19 +147,41 @@ char *get_next_line(int fd)
     buffer = (char *) malloc(sizeof(char) * (BUFFER_SIZE + 1));
     if(!buffer)
         return(NULL);
-    while(bytes_read != 0 && !(ft_strchr(str, '\n')))
+    while(bytes_read != 0 && !(ft_strchr(str[fd], '\n')))
     {
         bytes_read = read(fd,buffer, BUFFER_SIZE);
         if(bytes_read == -1)
         {
-            ft_free(&str, buffer);
+            ft_free(&str[fd], buffer);
             return(NULL);
         }
         buffer[bytes_read] = '\0';
-        str = ft_strjoin(str,buffer);
+        str[fd] = ft_strjoin(str[fd],buffer);
     }
     free(buffer);
-    buffer = ft_rnewline(str);
-    str = ft_substr(str, ft_strlen(buffer), ft_strlen(str));
+    buffer = ft_rnewline(str[fd]);
+    str[fd] = ft_substr(str[fd], ft_strlen(buffer), ft_strlen(str[fd]));
     return(buffer);
 }
+/*
+#include <stdio.h>
+
+int main()
+{
+    int fd;
+    int fd1;
+
+    fd = open("string.txt", O_RDONLY);
+    char *p;
+    p = get_next_line(fd);
+    printf("%s", p);
+    free(p);
+    fd1 = open("text.txt", O_RDONLY);
+    p  = get_next_line(fd1);
+    printf("%s", p);
+    free(p);    
+    p = get_next_line(fd);
+    printf("%s", p);
+    free(p);
+
+}*/
