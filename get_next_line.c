@@ -150,11 +150,12 @@ char    *get_next_line(int fd)
     static char str[BUFFER_SIZE + 1];
     char *line;
     char *p;
+
+    if(fd < 0 || BUFFER_SIZE <= 0)
+        return(NULL);
     p = str;
     line = NULL;
     line = ft_strjoin(line, p);
-    if(fd < 0 || BUFFER_SIZE <= 0)
-        return(NULL);
     line = ft_read(str, line, fd);
     line = ft_cutline(line);
     p = str;
