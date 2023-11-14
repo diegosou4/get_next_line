@@ -34,33 +34,37 @@ char	*ft_strchr(char *s, int c)
 	return (NULL);
 }
 
-void ft_cutline(char *buff, char *line )
+int ft_nline(char *buff)
 {
     int i;
     i = 0;
     if(!buff || buff[0] == '\0')
-        return;
+        return(0);
     while (buff[i] && buff[i] != '\n')
         i++;
     if(buff[i] == '\n')
         i++;
-    line = (char *) malloc((i + 1) * sizeof(char));
-    if(!line)
-        return;
+    return(i);
+}
+
+char    *ft_cutline(char *buff, int i)
+{
+    char *str;
+    str = (char *) malloc((i + 1) * sizeof(char));
     i = 0;
     while(buff[i] && buff[i] != '\n')
     {
-        line[i] = buff[i];
+        str[i] = buff[i];
         i++;
     }
     if(buff[i] == '\n')
     {
-        line[i] = '\n';
+        str[i] = '\n';
         i++;
     }
-    line[i] = '\0';
+    str[i] = '\0';
+    return(str);
 }
-
 void ft_wordjoin(char *buffer,char *str)
 {
     int i;
@@ -138,30 +142,36 @@ void    clearmystr(char *p)
 char    *get_next_line(int fd)
 {
     static char str[BUFFER_SIZE + 1];
-    char *line;
     char *p;
+    int i;
 
     if(fd < 0 || BUFFER_SIZE <= 0)
         return(NULL);
-    line = NULL;
     p = str;
-    ft_read(p, fd);
-    ft_cutline(p, line);
     clearmystr(p);
-    return(line);
+    ft_read(p, fd);
+    i = ft_nline(p);
+
+    return(ft_cutline(p , i));
 }
 
-
+/*
 int main()
 {
     int fd;
+    char *p;
 
     fd = open("string.txt", O_RDONLY);
-    
-    printf("%s", get_next_line(fd));
-    printf("%s", get_next_line(fd));
-    printf("%s", get_next_line(fd));
+    p = get_next_line(fd);
+    printf("%s", p);
+    free(p);
+    p = get_next_line(fd);
+    printf("%s", p);
+    free(p);
+    p = get_next_line(fd);
+    printf("%s", p);
+    free(p);
 
     close(fd);
 
-}
+}*/
