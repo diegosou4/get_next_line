@@ -51,7 +51,8 @@ char    *ft_join(char *new_str,char *line,char *str)
         j++;
     }
     new_str[i + j] = '\0';
-    free(line);
+    if(line)
+        free(line);
     return(new_str);
 
 }
@@ -74,7 +75,8 @@ char *ft_cutline(char *line)
         j++;
     }
     strcut[j] = '\0';
-    free(line);
+    if(line)
+        free(line);
     line = strcut;
     return(line);
 }
@@ -167,6 +169,7 @@ int main()
 
     fd = open("string.txt", O_RDONLY);
     
+    printf("%s", get_next_line(fd));
     printf("%s", get_next_line(fd));
     printf("%s", get_next_line(fd));
     printf("%s", get_next_line(fd));
