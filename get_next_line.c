@@ -8,7 +8,7 @@ int ft_strlen(char *str)
     i = 0;
     if(!str)
         return(0);
-    while (str[i] && str)
+    while (str[i])
         i++;
     return(i);
 }
@@ -34,144 +34,133 @@ char	*ft_strchr(char *s, int c)
 	return (NULL);
 }
 
-int ft_nline(char *buff)
-{
-    int i;
-    i = 0;
-    if(!buff || buff[0] == '\0')
-        return(0);
-    while (buff[i] && buff[i] != '\n')
-        i++;
-    if(buff[i] == '\n')
-        i++;
-    return(i);
-}
-
-char    *ft_cutline(char *buff, int i)
-{
-    char *str;
-    str = (char *) malloc((i + 1) * sizeof(char));
-    i = 0;
-    while(buff[i] && buff[i] != '\n')
-    {
-        str[i] = buff[i];
-        i++;
-    }
-    if(buff[i] == '\n')
-    {
-        str[i] = '\n';
-        i++;
-    }
-    str[i] = '\0';
-    return(str);
-}
-void ft_wordjoin(char *buffer,char *str)
+char    *ft_join(char *new_str,char *str, char *buffer)
 {
     int i;
     int j;
+
     i = 0;
     j = 0;
 
-    while(str[i])
-        i++;
-    while(buffer[j])
+    while(str && str[i])
     {
-        str[i + j] = buffer[j];
+        new_str[i] = str[i];
+        i++;
+    }
+    while(buffer && buffer[j])
+    {
+        new_str[i + j] = buffer[j];
         j++;
     }
-    str[i + j] = '\0';
-    if(buffer)
-        free(buffer);
+    new_str[i + j] = '\0';
+    return(new_str);
 }
 
 
-void    ft_read(char *str,int fd)
+char    *ft_strjoin(char *str, char *buffer)
 {
-    int bytes_reads;
+    char *new_str;
+
+    if(!str)
+    {
+        str = (char *) malloc (sizeof(char) * 1);
+        str[0] = '\0';
+    }
+    if(!str || !buffer)
+        return(NULL);
+    new_str = (char *)malloc((1 + ft_strlen(str)) + ft_strlen(buffer) * sizeof(char));
+    if(!new_str)
+        return(NULL);
+    new_str = ft_join(new_str,str,buffer);
+    free(str);
+    return(new_str);
+}
+
+char    *ft_rnewline(char *str)
+{
+    int i;
+    int j;
+    char *new_line;
+    i = 0;
+    j = 0;
+    if(str[i] == '\0')
+        return(NULL);
+    while(str[i] && str[i] != '\n')
+         i++;
+    if(str[i] == '\n')
+        i++;
+    new_line = (char *) malloc(sizeof(char) * (i + 1));
+    if(!new_line)
+        return(NULL);
+    while(j < i)
+    {
+        new_line[j] = str[j];
+        j++;
+    }
+    new_line[j] = '\0';
+    return(new_line);
+}
+
+
+
+char	*ft_substr(char  *str,int start, int len_str)
+{
+	int	i;
+	char	*subs;
+    int sum;
+    i = 0;
+    sum = len_str - start;
+    if(sum == 0 || !str)
+    {
+        free(str);
+        return(NULL);
+    }
+
+    subs = (char *) malloc(sizeof(char) * (sum + 1));
+    if(!subs)
+        return(NULL);
+    while(str[start])
+    {
+        subs[i] = str[start];
+        i++;
+        start++;
+    }
+    subs[i] = '\0';
+    free(str);
+    return(subs);
+}
+void ft_free(char **str, char *buffer)
+{
+    free(buffer);
+    free((*str));
+    (*str) = NULL;
+}
+
+char *get_next_line(int fd)
+{
+    static char *str;
     char *buffer;
-    
-    buffer = NULL;
-    bytes_reads = 1;
-    while (bytes_reads != 0 && !(ft_strchr(buffer, '\n')))
-    {
-        buffer = (char *) malloc((BUFFER_SIZE + 1) * sizeof(char));
-        if(!buffer)
-            return;
-        bytes_reads = read(fd,buffer,BUFFER_SIZE);
-        if(bytes_reads == -1)
-        {
-            free(buffer);
-            return;
-        }
-        if(bytes_reads == 0)
-        {
-            free(buffer);
-            return;
-        }
-        buffer[bytes_reads] = '\0';
-        ft_wordjoin(buffer, str);
-        buffer = NULL;
-    }
-}
-void    clearmystr(char *p)
-{
-    int i;
-    i = 0;
-    int j;
-    j = 0;
-    while(p[i] && p)
-    {
-        if(p[i] == '\n')
-        {
-            p[i] = 0;
-            i++;
-            break;
-        }
-        p[i] = 0;
-        i++;
-    }
-    while(p[i] && p)
-    {
-        p[j] = p[i];
-        j++;
-        i++;
-    }
-    p[j] = 0;
-}
-
-char    *get_next_line(int fd)
-{
-    static char str[BUFFER_SIZE + 1];
-    char *p;
-    int i;
+    int bytes_read;
+    bytes_read = 1;
 
     if(fd < 0 || BUFFER_SIZE <= 0)
         return(NULL);
-    p = str;
-    clearmystr(p);
-    ft_read(p, fd);
-    i = ft_nline(p);
-
-    return(ft_cutline(p , i));
+    buffer = (char *) malloc(sizeof(char) * (BUFFER_SIZE + 1));
+    if(!buffer)
+        return(NULL);
+    while(bytes_read != 0 && !(ft_strchr(str, '\n')))
+    {
+        bytes_read = read(fd,buffer, BUFFER_SIZE);
+        if(bytes_read == -1)
+        {
+            ft_free(&str, buffer);
+            return(NULL);
+        }
+        buffer[bytes_read] = '\0';
+        str = ft_strjoin(str,buffer);
+    }
+    free(buffer);
+    buffer = ft_rnewline(str);
+    str = ft_substr(str, ft_strlen(buffer), ft_strlen(str));
+    return(buffer);
 }
-
-/*
-int main()
-{
-    int fd;
-    char *p;
-
-    fd = open("string.txt", O_RDONLY);
-    p = get_next_line(fd);
-    printf("%s", p);
-    free(p);
-    p = get_next_line(fd);
-    printf("%s", p);
-    free(p);
-    p = get_next_line(fd);
-    printf("%s", p);
-    free(p);
-
-    close(fd);
-
-}*/
